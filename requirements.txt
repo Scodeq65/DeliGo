@@ -4,3 +4,4 @@ Flask-JWT-Extended
 Flask-SocketIO
 eventlet
 python-dotenv
+Flask_CORS

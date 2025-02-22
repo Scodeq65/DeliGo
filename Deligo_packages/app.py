@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from Deligo_packages.config import Config
 from Deligo_packages.extensions import db, socketio, jwt
 from flask_socketio import join_room
@@ -13,6 +14,9 @@ def create_app():
     jwt.init_app(app)
     socketio.init_app(app, cors_allowed_origins="*")
     
+    # Enable CORS
+    CORS(app, origins="http://localhost:3000", supports_credentials=True)
+         
     # Register Blueprints
     from Deligo_packages.routes.auth import auth_bp
     from Deligo_packages.routes.restaurants import restaurant_bp
