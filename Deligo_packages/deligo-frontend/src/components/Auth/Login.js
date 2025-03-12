@@ -1,6 +1,7 @@
 // src/components/Auth/Login.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import api, { setAuthToken } from '../../services/api';
 import { TextField, Button, Box, Typography } from '@mui/material';
 
@@ -17,7 +18,17 @@ const Login = () => {
       const { access_token } = res.data;
       localStorage.setItem('access_token', access_token);
       setAuthToken(access_token);
-      navigate('/'); // Redirect after login
+
+      // Decode the token to get the user's role
+      const decoded = jwtDecode(access_token);
+      const userRole = decoded.role || 'user';
+
+      // Redirect based on role
+      if (userRole === 'admin') {
+        navigate('/admin/menu');  // Redirect to the admin dashboard
+      } else {
+        navigate('/dashboard');  // Redirect to the general client homepage/dashboard
+      }
     } catch (err) {
       setError('Invalid credentials');
     }

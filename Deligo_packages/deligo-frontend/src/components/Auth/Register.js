@@ -2,7 +2,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { 
+  TextField, 
+  Button, 
+  Box, 
+  Typography, 
+  FormControl, 
+  InputLabel, 
+  Select, 
+  MenuItem 
+} from '@mui/material';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -10,7 +19,8 @@ const Register = () => {
     email: '',
     password: '',
     phone: '',
-    address: ''
+    address: '',
+    role: 'user'  // default role is "user"
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -83,6 +93,21 @@ const Register = () => {
           onChange={handleChange}
           required
         />
+        {/* Role Selection */}
+        <FormControl fullWidth margin="normal" required>
+          <InputLabel id="role-label">Role</InputLabel>
+          <Select
+            labelId="role-label"
+            id="role"
+            name="role"
+            value={formData.role}
+            label="Role"
+            onChange={handleChange}
+          >
+            <MenuItem value="user">User</MenuItem>
+            <MenuItem value="admin">Admin</MenuItem>
+          </Select>
+        </FormControl>
         <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
           Register
         </Button>

@@ -10,7 +10,18 @@ const RestaurantList = () => {
     const fetchRestaurants = async () => {
       try {
         const res = await api.get('/api/restaurants/');
-        setRestaurants(res.data);
+        console.log("API response:", res.data);
+        console.log("Type of res.data.data:", typeof res.data.data, "Array?", Array.isArray(res.data.data));
+
+        // Check if res.data.data is an array:
+        if (Array.isArray(res.data.data)) {
+          setRestaurants(res.data.data);
+        } else if (Array.isArray(res.data)) {
+          setRestaurants(res.data);
+        } else {
+          console.error("Invalid response from API:", res.data);
+          setRestaurants([]); // Reset restaurants to empty array
+        }
       } catch (error) {
         console.error('Error fetching restaurants:', error);
       }

@@ -101,7 +101,7 @@ def create_restaurant():
             address=data['address'],
             phone=data['phone'],
             description=data.get('description', ''),
-            #logo_url=data.get('logo_url', '')
+            logo_url=data.get('logo_url', '')
         )
         
         db.session.add(restaurant)

@@ -11,6 +11,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(128), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     address = db.Column(db.Text, nullable=False)
+    role = db.Column(db.String(20), nullable=False, default='user')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     orders = db.relationship('Order', backref='user', lazy=True)
 
@@ -27,6 +28,7 @@ class User(db.Model):
             "email": self.email,
             "phone": self.phone,
             "address": self.address,
+            "role": self.role,
             "created_at": self.created_at.isoformat(),
         }
 
@@ -41,7 +43,7 @@ class Restaurant(db.Model):
     description = db.Column(db.Text)
     address = db.Column(db.Text, nullable=False)
     phone = db.Column(db.String(20), nullable=False)
-    #logo_url = db.Column(db.String(255))
+    logo_url = db.Column(db.String(255), nullable=True)
     rating = db.Column(db.Numeric(3, 2), default=0.0)
     dishes = db.relationship('Dish', backref='restaurant', lazy=True)
 
@@ -52,7 +54,7 @@ class Restaurant(db.Model):
             "description": self.description,
             "address": self.address,
             "phone": self.phone,
-            #"logo_url": self.logo_url,
+            "logo_url": self.logo_url,
             "rating": float(self.rating),
             "dishes": [dish.to_dict() for dish in self.dishes] if self.dishes else [],
         }
@@ -64,11 +66,11 @@ class Restaurant(db.Model):
 class Dish(db.Model):
     __tablename__ = 'dishes'
     dish_id = db.Column(db.Integer, primary_key=True)
-    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.restaurant_id'), nullable=False)
+    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.restaurant_id', ondelete='CASCADE'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     price = db.Column(db.Numeric(10, 2), nullable=False)
-    #image_url = db.Column(db.String(255))
+    image_url = db.Column(db.String(255), nullable=True)
     is_available = db.Column(db.Boolean, default=True)
 
     def to_dict(self):
@@ -78,7 +80,7 @@ class Dish(db.Model):
             "name": self.name,
             "description": self.description,
             "price": float(self.price),
-            #"image_url": self.image_url,
+            "image_url": self.image_url,
             "is_available": self.is_available,
         }
 

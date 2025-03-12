@@ -1,32 +1,45 @@
 // src/context/AuthContext.js
 import React, { createContext, useState, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import { setAuthToken } from '../services/api';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [accessToken, setAccessTokenState] = useState(localStorage.getItem('access_token'));
+  const [token, setToken] = useState(localStorage.getItem('access_token'));
+  const [userInfo, setUserInfo] = useState(null);
 
-  // Whenever the token changes, update the Axios header
   useEffect(() => {
-    setAuthToken(accessToken);
-  }, [accessToken]);
+    if (token) {
+      setAuthToken(token);
+      try {
+        const decoded = jwtDecode(token);
+        setUserInfo({
+          role: decoded.role || 'user',
+          name: decoded.name || '',
+          id: decoded.sub || decoded.identity,
+        });
+      } catch (error) {
+        console.error("Token decode error:", error);
+      }
+    } else {
+      setUserInfo(null);
+    }
+  }, [token]);
 
-  const login = (token, userData) => {
-    localStorage.setItem('access_token', token);
-    setAccessTokenState(token);
-    setUser(userData);
+  const login = (newToken) => {
+    localStorage.setItem('access_token', newToken);
+    setToken(newToken);
   };
 
   const logout = () => {
     localStorage.removeItem('access_token');
-    setAccessTokenState(null);
-    setUser(null);
+    setToken(null);
+    setUserInfo(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, accessToken, login, logout }}>
+    <AuthContext.Provider value={{ token, userInfo, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
